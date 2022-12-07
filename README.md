@@ -14,4 +14,3 @@
 
 [Otis Lu](https://github.com/OtisL99)
 
-[Lucy Kocharian](https://github.com/Lkochar19)
