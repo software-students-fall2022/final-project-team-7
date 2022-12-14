@@ -1,0 +1,2 @@
+python3 processSpeech.py
+python3 conversation.py
