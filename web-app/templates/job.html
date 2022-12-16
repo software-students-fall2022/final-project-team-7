@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+
+<div class="container">
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">ML Client</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/">Home</a>
+                        </li>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main>{% block container %} {% endblock %}</main>
+    <footer>
+        <p>
+            &copy; 2022. Shared under the GPL3 license. Source code available at
+            <a href="https://github.com/software-students-fall2022/containerized-app-exercise-team3/">available on
+                Github.</a>
+        </p>
+    </footer>
+</div>
+
+{% endblock %}
+
+{% block container %}
+
+    <h3>Details for {{ job.name }}</h3>
+    <span class="badge bg-success">{{job.status}}</span><br>
+    <small>Created at {{ job.creation_time }}</small><br>
+    <small>Completed at {{ job.completion_time }}</small><br>
+    <!-- <small>Audio file: <span class="placeholder col-1"></span></small><br> -->
+    <h2>Transcript</h2>
+    <p>{{ job.transcript }}</p>
+    <h3>Statistics</h3>
+    <small>Average time for each token: {{avg_time}}</small><br>
+    <small>Average confidence for each token: {{avg_confidence}}</small><br>
+
+    <a href="/"><button type="button" class="btn btn-primary">Return</button></a>
+{% endblock %}
