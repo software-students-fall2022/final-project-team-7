@@ -8,7 +8,7 @@ RUN pip install --trusted-host pypi.python.org -r requirements.txt
 # Make port 80 available to the world outside this container
 EXPOSE 80
 # Define an environment variable... this will be available to programs running inside the container
-ENV API_TOKEN=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
-ENV OPENAI_API_KEY=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
+ENV API_TOKEN=${{ secrets.API_TOKEN }}
+ENV OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
 # Run app.py when the container launches
 CMD ["python", "__main__.py"]
