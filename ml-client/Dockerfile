@@ -7,8 +7,5 @@ RUN pip install --trusted-host pypi.python.org -r requirements.txt
 # by default Docker containers are closed off to the external world
 # Make port 80 available to the world outside this container
 EXPOSE 80
-# Define an environment variable... this will be available to programs running inside the container
-ENV API_TOKEN=${{ secrets.API_TOKEN }}
-ENV OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
 # Run app.py when the container launches
 CMD ["python", "__main__.py"]
