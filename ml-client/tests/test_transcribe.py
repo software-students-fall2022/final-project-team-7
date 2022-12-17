@@ -6,7 +6,7 @@ import string
 import random
 ## import the module to test, processSpeech
 sys.path.append('../ml-client')
-from processSpeech import query
+from processSpeech import transcribe
 
 class Tests:
     #
@@ -28,7 +28,7 @@ class Tests:
         fileName = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
         fileName = fileName + ".m4a"
         try: 
-            query(fileName)
+            transcribe(fileName)
         except FileNotFoundError:
             assert True, "Expected file to be not found!"
     
@@ -36,12 +36,12 @@ class Tests:
         ## Use wrong file format
         fileName = "command.txt"
         try:
-            query(fileName)
+            transcribe(fileName)
         except ValueError:
             assert True, "Expected file to be wrong format!"
     
     def test_speechfile(self):
         ## Use correct file template, should return json
         fileName = "testsample.m4a"
-        jsonOutput = query(fileName)
+        jsonOutput = transcribe(fileName)
         assert type(jsonOutput) is dict, "Expected file to be json!"
