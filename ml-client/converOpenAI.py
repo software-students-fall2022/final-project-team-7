@@ -13,7 +13,6 @@ def openAI(prompt):
         temperature=0.4,
         max_tokens=150,
     )
-    print(response["choices"][0]["text"].strip())
     return response["choices"][0]["text"].strip()
 
-openAI("Hi, I'm a bot. What's your name?")
+## openAI("Hi, I'm a bot. What's your name?")

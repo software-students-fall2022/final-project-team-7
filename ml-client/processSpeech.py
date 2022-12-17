@@ -17,4 +17,4 @@ def transcribe(filename):
 def output():
     print(transcribe("testsample.m4a"))
 
-output()
+## output()

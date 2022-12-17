@@ -1,2 +1,2 @@
 from converOpenAI import openAI
-from processSpeech import processSpeech
+from processSpeech import transcribe
