@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, make_response
+from flask_bootstrap import Bootstrap
 from dotenv import dotenv_values
+
 
 import pymongo
 import datetime
@@ -8,6 +10,8 @@ import sys
 
 # instantiate the app
 app = Flask(__name__)
+# instantiate the bootstrap object
+bootstrap=Bootstrap(app)
 
 # load credentials and configuration options from .env file
 # if you do not yet have a file named .env, make one based on the template in env.example
