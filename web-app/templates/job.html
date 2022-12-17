@@ -21,7 +21,7 @@
                 </div>
             </nav>
         </header>
-        <main>{% block content %} {% endblock %}</main>
+        <main>{% block container %} {% endblock %}</main>
         <footer>
             <p>
                 &copy; 2022. Shared under the GPL3 license. Source code available at
@@ -33,7 +33,7 @@
 </div>
 {% endblock %}
 
-{% block content %}
+{% block container %}
 
 <h3>Details for {{ job.name }}</h3>
 <span class="badge bg-success">{{job.status}}</span><br>

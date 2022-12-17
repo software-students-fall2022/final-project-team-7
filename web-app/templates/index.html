@@ -21,7 +21,7 @@
                 </div>
             </nav>
         </header>
-        <main>{% block content %} {% endblock %}</main>
+        <main>{% block container %} {% endblock %}</main>
         <footer>
             <p>
                 &copy; 2022. Shared under the GPL3 license. Source code available at
@@ -33,7 +33,7 @@
 </div>
 {% endblock %}
 
-{% block content %}
+{% block container %}
 <h2>Current jobs</h2>
 <ul class="list-group">
     {% for job in jobs %}
