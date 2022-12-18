@@ -8,7 +8,7 @@ import pymongo
 import datetime
 from bson.objectid import ObjectId
 from bson.timestamp import Timestamp
-import sys
+import requests
 
 # instantiate the app
 app = Flask(__name__)
@@ -46,6 +46,8 @@ user_collection = db.user
 log_in = False
 
 # login page
+
+
 @app.route('/')
 def login():
     """
@@ -56,7 +58,6 @@ def login():
     return render_template('login.html')
 
 
-
 # register page
 @app.route('/register', methods=['GET', 'POST'])
 def regis():
@@ -65,21 +66,24 @@ def regis():
     """
     if request.method == 'POST':
         json_data = request.form
-        cur = {"username":json_data.get("floatingInput"), "password":json_data.get("floatingPassword")}
+        cur = {"username": json_data.get(
+            "floatingInput"), "password": json_data.get("floatingPassword")}
         # check if the username is already in the database
-        if user_collection.find_one({'username':json_data.get('floatingInput')}) != None:
-            return render_template('register.html', ActExist = True)
+        if user_collection.find_one({'username': json_data.get('floatingInput')}) != None:
+            return render_template('register.html', ActExist=True)
         user_collection.insert_one(cur)
-        return render_template('login.html', CreAct = True)
+        return render_template('login.html', CreAct=True)
     return render_template('register.html')
+
 
 @app.route('/home', methods=['GET', 'POST'])
 def home():
     global log_in
     if request.method == 'POST':
         json_data = request.form
-        cur = user_collection.find_one({'username':json_data.get('floatingInput')})
-        if cur==None:
+        cur = user_collection.find_one(
+            {'username': json_data.get('floatingInput')})
+        if cur == None:
             return render_template('login.html', NoAct=True)
         else:
             if cur['password'] == json_data.get('floatingPassword'):
@@ -165,7 +169,7 @@ def job(job_id):
 @app.route('/history/')
 @app.route('/history/<date_range>')
 def history(date_range=None):
-    uid = '639e28607c6eba5ef2939c4b' # ???
+    uid = '639e28607c6eba5ef2939c4b'  # ???
     if date_range is None:
         date_range = 'all'
     if date_range == 'today':
@@ -179,7 +183,7 @@ def history(date_range=None):
                 {'to_id': ObjectId(uid)}
             ],
             'timestamp': {'$gte': today}
-        }).sort('timestamp', pymongo.ASCENDING).limit(30)       
+        }).sort('timestamp', pymongo.ASCENDING).limit(30)
     elif date_range == 'this_week':
         today = datetime.datetime.now()
         today = datetime.datetime(today.year, today.month, today.day)
@@ -204,7 +208,8 @@ def history(date_range=None):
         return render_template('error.html', error='Invalid date range'), 404
     res = []
     for doc in chat_log:
-        doc['timestamp'] = datetime.datetime.fromtimestamp(doc['timestamp'].time)
+        doc['timestamp'] = datetime.datetime.fromtimestamp(
+            doc['timestamp'].time)
         doc['timestamp'] = doc['timestamp'].strftime('%Y-%m-%d %H:%M:%S')
         doc['is_bot'] = doc['to_id'] == ObjectId(uid)
         res.append(doc)
@@ -217,7 +222,7 @@ def chatroom():
     return render_template('chatroom.html')
 
 
-# route for chatroom
+# route for chatroom audio transcribe
 @app.route('/chatroom/audio', methods=['POST'])
 def handle_audio_upload():
     files = request.files
@@ -228,14 +233,36 @@ def handle_audio_upload():
     file.save(save_filepath)
 
     if os.path.isfile(save_filepath):
-        return jsonify({
-            "success": 1,
-            "message": f"{save_filename} successfully saved!"
-        })
+        res = requests.post("http://localhost:5001/transcribe", json={
+            "file_name": save_filename
+        }, headers={
+            "Content-Type": "application/json; charset=utf-8"
+        }).json()
+
+        return jsonify(res)
     else:
         return jsonify({
-            "success": 0
+            "success": 0,
+            "message": "Error occurred when saving file"
         })
+
+
+# route for chatroom audio transcribe
+@app.route('/chatroom/response', methods=['POST'])
+def handle_bot_response():
+    data = request.json
+    print("data:", data)
+
+    prompt = data["prompt"]
+    print("prompt:", prompt)
+
+    res = requests.post("http://localhost:5001/openAI", json={
+        "prompt": prompt
+    }, headers={
+        "Content-Type": "application/json; charset=utf-8"
+    }).json()
+
+    return jsonify(res)
 
 
 # route to handle any errors
