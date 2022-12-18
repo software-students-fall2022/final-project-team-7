@@ -5,6 +5,7 @@ import pymongo
 import datetime
 from bson.objectid import ObjectId
 import sys
+from flask import session
 
 # instantiate the app
 app = Flask(__name__)
@@ -78,6 +79,8 @@ def home():
         else:
             if cur['password'] == json_data.get('floatingPassword'):
                 log_in = True
+                session['username'] = json_data.get('floatingInput')
+                session['password'] = json_data.get('floatingPassword')
             else:
                 return render_template('login.html', NoAct=True)
     else:
