@@ -34,8 +34,55 @@ except Exception as e:
 # set up the routes
 # add statistics display to home page
 # route for the home page
+
+# web MongoClient
+user_collection = db.user
+log_in = False
+
+# login page
 @app.route('/')
+def login():
+    """
+    Route for the login page
+    """
+    global log_in
+    log_in = False
+    return render_template('login.html')
+
+
+
+# register page
+@app.route('/register', methods=['GET', 'POST'])
+def regis():
+    """
+    Route for the register page
+    """
+    if request.method == 'POST':
+        json_data = request.form
+        cur = {"username":json_data.get("floatingInput"), "password":json_data.get("floatingPassword")}
+        # check if the username is already in the database
+        if user_collection.find_one({'username':json_data.get('floatingInput')}) != None:
+            return render_template('register.html', ActExist = True)
+        user_collection.insert_one(cur)
+        return render_template('login.html', CreAct = True)
+    return render_template('register.html')
+
+@app.route('/home', methods=['GET', 'POST'])
 def home():
+    global log_in
+    if request.method == 'POST':
+        json_data = request.form
+        cur = user_collection.find_one({'username':json_data.get('floatingInput')})
+        if cur==None:
+            return render_template('login.html', NoAct=True)
+        else:
+            if cur['password'] == json_data.get('floatingPassword'):
+                log_in = True
+            else:
+                return render_template('login.html', NoAct=True)
+    else:
+        if log_in == False:
+            return render_template('login.html')
     """
     Route for the home page
     """
