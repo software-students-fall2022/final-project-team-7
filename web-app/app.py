@@ -40,7 +40,7 @@ except Exception as e:
 # route for the home page
 
 # web MongoClient
-user_collection = pymongo.MongoClient(config['MONGO_URI'], serverSelectionTimeoutMS=5000).user.username
+user_collection = db.user
 log_in = False
 
 # login page
