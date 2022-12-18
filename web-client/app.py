@@ -7,6 +7,8 @@ import uuid
 import pymongo
 import datetime
 from bson.objectid import ObjectId
+from bson.timestamp import Timestamp
+import sys
 
 # instantiate the app
 app = Flask(__name__)
@@ -39,9 +41,54 @@ except Exception as e:
 # add statistics display to home page
 # route for the home page
 
+# web MongoClient
+user_collection = db.user
+log_in = False
 
+# login page
 @app.route('/')
+def login():
+    """
+    Route for the login page
+    """
+    global log_in
+    log_in = False
+    return render_template('login.html')
+
+
+
+# register page
+@app.route('/register', methods=['GET', 'POST'])
+def regis():
+    """
+    Route for the register page
+    """
+    if request.method == 'POST':
+        json_data = request.form
+        cur = {"username":json_data.get("floatingInput"), "password":json_data.get("floatingPassword")}
+        # check if the username is already in the database
+        if user_collection.find_one({'username':json_data.get('floatingInput')}) != None:
+            return render_template('register.html', ActExist = True)
+        user_collection.insert_one(cur)
+        return render_template('login.html', CreAct = True)
+    return render_template('register.html')
+
+@app.route('/home', methods=['GET', 'POST'])
 def home():
+    global log_in
+    if request.method == 'POST':
+        json_data = request.form
+        cur = user_collection.find_one({'username':json_data.get('floatingInput')})
+        if cur==None:
+            return render_template('login.html', NoAct=True)
+        else:
+            if cur['password'] == json_data.get('floatingPassword'):
+                log_in = True
+            else:
+                return render_template('login.html', NoAct=True)
+    else:
+        if log_in == False:
+            return render_template('login.html')
     """
     Route for the home page
     """
@@ -115,13 +162,53 @@ def job(job_id):
 
 
 # route for chat history
-@app.route('/history')
-def history():
-    uid = '639e28607c6eba5ef2939c4b'  # ???
-    chat_log = db.chat.find({'from_id': ObjectId(uid)})
-    for each in chat_log:
-        each["time"] = each["time"].strftime("%Y-%m-%d %H:%M:%S")
-    return render_template('history.html', chat_log=chat_log)
+@app.route('/history/')
+@app.route('/history/<date_range>')
+def history(date_range=None):
+    uid = '639e28607c6eba5ef2939c4b' # ???
+    if date_range is None:
+        date_range = 'all'
+    if date_range == 'today':
+        today = datetime.datetime.now()
+        today = datetime.datetime(today.year, today.month, today.day)
+        today = datetime.datetime.timestamp(today)
+        today = Timestamp(int(today), 0)
+        chat_log = db.chat.find({
+            '$or': [
+                {'from_id': ObjectId(uid)},
+                {'to_id': ObjectId(uid)}
+            ],
+            'timestamp': {'$gte': today}
+        }).sort('timestamp', pymongo.ASCENDING).limit(30)       
+    elif date_range == 'this_week':
+        today = datetime.datetime.now()
+        today = datetime.datetime(today.year, today.month, today.day)
+        last_week = today - datetime.timedelta(days=7)
+        last_week = datetime.datetime.timestamp(last_week)
+        last_week = Timestamp(int(last_week), 0)
+        chat_log = db.chat.find({
+            '$or': [
+                {'from_id': ObjectId(uid)},
+                {'to_id': ObjectId(uid)}
+            ],
+            'timestamp': {'$gte': last_week}
+        }).sort('timestamp', pymongo.ASCENDING).limit(30)
+    elif date_range == 'all':
+        chat_log = db.chat.find({
+            '$or': [
+                {'from_id': ObjectId(uid)},
+                {'to_id': ObjectId(uid)}
+            ]
+        }).sort('timestamp', pymongo.ASCENDING).limit(30)
+    else:
+        return render_template('error.html', error='Invalid date range'), 404
+    res = []
+    for doc in chat_log:
+        doc['timestamp'] = datetime.datetime.fromtimestamp(doc['timestamp'].time)
+        doc['timestamp'] = doc['timestamp'].strftime('%Y-%m-%d %H:%M:%S')
+        doc['is_bot'] = doc['to_id'] == ObjectId(uid)
+        res.append(doc)
+    return render_template('history.html', chat_log=res)
 
 
 # route for chatroom
