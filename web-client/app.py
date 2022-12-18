@@ -1,10 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for, make_response
+from flask import Flask, render_template, request, redirect, url_for, make_response, jsonify
 from dotenv import dotenv_values
 
+import os
+import sys
+import uuid
 import pymongo
 import datetime
 from bson.objectid import ObjectId
-import sys
 
 # instantiate the app
 app = Flask(__name__)
@@ -126,6 +128,27 @@ def history():
 @app.route('/chatroom')
 def chatroom():
     return render_template('chatroom.html')
+
+
+# route for chatroom
+@app.route('/chatroom/audio', methods=['POST'])
+def handle_audio_upload():
+    files = request.files
+    file = files.get('fileBlob')
+
+    save_filename = f"{str(uuid.uuid4())}.wav"
+    save_filepath = os.path.join("audios", save_filename)
+    file.save(save_filepath)
+
+    if os.path.isfile(save_filepath):
+        return jsonify({
+            "success": 1,
+            "message": f"{save_filename} successfully saved!"
+        })
+    else:
+        return jsonify({
+            "success": 0
+        })
 
 
 # route to handle any errors
