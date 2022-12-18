@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="../static/css/styleprofile.css">
+</head>
+
+<body>
+    <div>
+        <a href="/profile">
+            <button class = "profile_button">Back</button>
+        </a>
+        <h3>Edit Profile</h3>
+        <hr>
+    </div>
+    <form method = "POST" action = "/edit">
+        <div class="bg-secondary-soft px-4 py-5 rounded">
+    
+            <h3>Change Account Information</h3>
+            <div>
+                <label>Email</label>
+                <input type="email" class="form-control" placeholder="New email(optional)" name = "email">
+            </div>
+            
+            <h3>Reset Password</h3>
+            <div>
+                <label>Password</label>
+                <input type="password" class="form-control" placeholder="Password" name = "password">
+            </div>
+            <div>
+                <label>Confirm Password</label>
+                <input type="password" class="form-control" placeholder="Confirm Password" name = "confirm_password">
+            </div>
+            
+            <div class = "button_div">
+                <p class = "error">{{message}}</p>
+                <button class = "profile_button" type = "submit">Confirm</button>
+            </div>
+        </div>
+    </form>
+    
+</body>

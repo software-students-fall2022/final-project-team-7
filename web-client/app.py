@@ -60,6 +60,7 @@ def login():
 
 
 # register page
+# capture register date and online date
 @app.route('/register', methods=['GET', 'POST'])
 def regis():
     """
@@ -67,8 +68,9 @@ def regis():
     """
     if request.method == 'POST':
         json_data = request.form
-        cur = {"username": json_data.get(
-            "floatingInput"), "password": json_data.get("floatingPassword")}
+        reg_date = str(datetime.date.today())
+        cur = {"username": json_data.get("floatingInput"), "password": json_data.get("floatingPassword"),
+               "reg_date": reg_date, "num_chat": 0, "last_online": "None", "log_time": reg_date}
         # check if the username is already in the database
         if user_collection.find_one({'username': json_data.get('floatingInput')}) != None:
             return render_template('register.html', ActExist=True)
@@ -87,7 +89,12 @@ def home():
         if cur == None:
             return render_template('login.html', NoAct=True)
         else:
+            # Update last_online upon login
             if cur['password'] == json_data.get('floatingPassword'):
+                log_time = str(datetime.date.today())
+                last_online = cur["log_time"]
+                username = cur["username"]
+                user_collection.update_one({"username": username}, {"$set": {"last_online": last_online, "log_time": log_time}})
                 log_in = True
                 # save username and user_id in session
                 session['username'] = cur['username']
@@ -218,6 +225,45 @@ def history(date_range=None):
         doc['is_bot'] = doc['to_id'] == ObjectId(uid)
         res.append(doc)
     return render_template('history.html', chat_log=res)
+
+
+# account profile page
+# waiting for flask session to be implemented
+@app.route('/profile')
+def profile():
+    user_id = "639ed925fdbaf2074da8911b" # an existing id for testing
+    current_user = user_collection.find_one(({'_id': ObjectId(user_id)}))
+    username = current_user["username"]
+    signup = current_user["reg_date"]
+    last_login = current_user["last_online"]
+    chat_history = current_user["num_chat"]
+    return render_template('profile.html', email=username, signup=signup, login=last_login, chat_history=chat_history)
+
+
+# Edit account page
+# Waiting for flask session to be implemented
+@app.route('/edit', methods=['GET', 'POST'])
+def edit():
+    user_id = "639ed925fdbaf2074da8911b" # an existing id for testing
+    if request.method == 'POST':
+        changed_email = request.form["email"]
+        changed_password = request.form["password"]
+        confirm_password = request.form["confirm_password"]
+        doc = {}
+        if len(changed_email) == 0 and len(changed_password) == 0 and len(confirm_password) == 0:
+            return render_template('edit.html', message="No changes made")
+        if len(changed_password) != 0 or len(confirm_password) != 0:
+            if changed_password != confirm_password:
+                return render_template('edit.html', message="Failed password confirmation")
+        if len(changed_email) != 0:
+            if not user_collection.find_one({'username': changed_email}) is None:
+                return render_template('edit.html', message="Email taken")
+            doc["username"] = changed_email
+        if len(changed_password) != 0:
+            doc["password"] = changed_password
+        user_collection.update_one({'_id': ObjectId(user_id)}, {"$set": doc})
+        return redirect(url_for("profile"))
+    return render_template('edit.html')
 
 
 # route for chatroom

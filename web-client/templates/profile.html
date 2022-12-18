@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="../static/css/styleprofile.css">
+</head>
+
+<body>
+    <div>
+        <a href="/home">
+            <button class = "profile_button">Back</button>
+        </a>
+        
+        <h3>User Profile</h3>
+        <hr>
+    </div>
+    <div class="bg-secondary-soft px-4 py-5 rounded">
+        <div class="text-center">
+            <div class = "photodiv">
+                <img class = "photo" src="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png">
+            </div>
+        </div>
+    </div>
+    <div class="bg-secondary-soft px-4 py-5 rounded">
+        <h3>Account Information</h3>
+        <div>
+            <h4>Email</h4>
+            <p>{{email}}</p>
+        </div>
+        <div>
+            <h4>Sign-up Date</h4>
+            <p>{{signup}}</p>
+        </div>
+        <div>
+            <h4>Recent login</h4>
+            <p>{{login}}</p>
+        </div>
+        <div>
+            <h4>Chat History</h4>
+            <p>{{chat_history}}</p>
+        </div>
+        <a href="/edit">
+            <div class = "button_div">
+                <button class = "profile_button">Edit</button>
+            </div>
+        </a>
+    </div>
+</body>
