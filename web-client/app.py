@@ -102,13 +102,23 @@ def job(job_id):
 
 
 # route for chat history
-@app.route('/history')
-def history():
+@app.route('/history/')
+@app.route('/history/<from_time>/<to_time>') # to be implemented
+def history(from_time=None, to_time=None):
     uid = '639e28607c6eba5ef2939c4b' # ???
-    chat_log = db.chat.find({'from_id': ObjectId(uid)})
-    for each in chat_log:
-        each["time"] = each["time"].strftime("%Y-%m-%d %H:%M:%S")
-    return render_template('history.html', chat_log=chat_log)
+    chat_log = db.chat.find({
+        '$or': [
+            {'from_id': ObjectId(uid)},
+            {'to_id': ObjectId(uid)}
+        ]
+    }).sort('timestamp', pymongo.ASCENDING).limit(30)
+    res = []
+    for doc in chat_log:
+        doc['timestamp'] = datetime.datetime.fromtimestamp(doc['timestamp'].time)
+        doc['timestamp'] = doc['timestamp'].strftime('%Y-%m-%d %H:%M:%S')
+        doc['is_bot'] = doc['to_id'] == ObjectId(uid)
+        res.append(doc)
+    return render_template('history.html', chat_log=res)
 
 
 # route to handle any errors
