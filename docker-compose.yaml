@@ -1,0 +1,32 @@
+services:
+  web-client:
+    container_name: web-client
+    build: ./web-client
+    working_dir: "/app"
+    ports:
+      - "5000:5000"
+    links:
+      - ml-client
+    depends_on:
+      - ml-client
+    volumes:
+      - ./web-client:/app
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_DEBUG=${FLASK_DEBUG}
+      - MONGO_DBNAME=${MONGO_DBNAME}
+      - MONGO_URI=${MONGO_URI}
+
+  ml-client:
+    container_name: ml-client
+    build: ./ml-client
+    working_dir: "/app/ml-client"
+    ports:
+      - "5001:5001"
+    volumes:
+      - .:/app
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_DEBUG=${FLASK_DEBUG}
+      - API_TOKEN=${API_TOKEN}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
