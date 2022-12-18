@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect, url_for, make_response, jsonify
-from dotenv import dotenv_values
 
 import os
 import sys
@@ -14,28 +13,19 @@ from flask import session
 # instantiate the app
 app = Flask(__name__)
 
-# load credentials and configuration options from .env file
-# if you do not yet have a file named .env, make one based on the template in env.example
-config = dotenv_values(".env")
-
-# turn on debugging if in development mode
-if config['FLASK_ENV'] == 'development':
-    # turn on debugging, if in development
-    app.debug = True  # debug mnode
-
-
 # connect to the database
-cxn = pymongo.MongoClient(config['MONGO_URI'], serverSelectionTimeoutMS=5000)
+cxn = pymongo.MongoClient(os.getenv("MONGO_URI"),
+                          serverSelectionTimeoutMS=5000)
 try:
     # verify the connection works by pinging the database
     # The ping command is cheap and does not require auth.
     cxn.admin.command('ping')
-    db = cxn[config['MONGO_DBNAME']]  # store a reference to the database
+    db = cxn[os.getenv("MONGO_DBNAME")]  # store a reference to the database
     # if we get here, the connection worked!
     print(' *', 'Connected to MongoDB!')
 except Exception as e:
     # the ping command failed, so the connection is not available.
-    print(' *', "Failed to connect to MongoDB at", config['MONGO_URI'])
+    print(' *', "Failed to connect to MongoDB")
     print('Database connection error:', e)  # debug
 
 # set up the routes
@@ -283,7 +273,7 @@ def handle_audio_upload():
     file.save(save_filepath)
 
     if os.path.isfile(save_filepath):
-        res = requests.post("http://localhost:5001/transcribe", json={
+        res = requests.post("http://ml-client:5001/transcribe", json={
             "file_name": save_filename
         }, headers={
             "Content-Type": "application/json; charset=utf-8"
@@ -306,7 +296,7 @@ def handle_bot_response():
     prompt = data["prompt"]
     print("prompt:", prompt)
 
-    res = requests.post("http://localhost:5001/openAI", json={
+    res = requests.post("http://ml-client:5001/openAI", json={
         "prompt": prompt
     }, headers={
         "Content-Type": "application/json; charset=utf-8"
