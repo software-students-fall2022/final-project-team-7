@@ -9,6 +9,7 @@ import datetime
 from bson.objectid import ObjectId
 from bson.timestamp import Timestamp
 import requests
+from flask import session
 
 # instantiate the app
 app = Flask(__name__)
@@ -95,6 +96,9 @@ def home():
                 username = cur["username"]
                 user_collection.update_one({"username": username}, {"$set": {"last_online": last_online, "log_time": log_time}})
                 log_in = True
+                # save username and user_id in session
+                session['username'] = cur['username']
+                session['user_id'] = str(cur['_id'])
             else:
                 return render_template('login.html', NoAct=True)
     else:
