@@ -1,6 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM python:3.11-alpine
-RUN apk add --no-cache gcc musl-dev linux-headers
+FROM python:3.11-slim-buster
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 EXPOSE 5000

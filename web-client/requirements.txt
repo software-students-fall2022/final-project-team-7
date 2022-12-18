@@ -12,3 +12,4 @@ pytest
 dnspython
 pytest_flask
 requests
+mongomock
