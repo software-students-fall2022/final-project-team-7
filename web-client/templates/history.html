@@ -1,15 +1,45 @@
 {% extends 'base.html' %}
 
 {% block container %}
+    <div class="container p-0">
+        <!-- code adapted from: www.bootdey.com -->
+		<h1 class="h3 mb-3">Chat History</h1>
+		<div class="card">
+			<div class="row g-0">
+				<div class="col-12 col-lg-12 col-xl-12">
+					<div class="position-relative">
+						<div class="chat-messages p-4">
+                            {%for chat in chat_log %}
+                            {% if chat.is_bot %}
+                            <div class="chat-message-left pb-4">
+                                <div>
+									<img src="/static/default.svg" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40">
+									<div class="text-muted small text-nowrap mt-2">{{chat.timestamp}}</div>
+								</div>
+								<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
+									{{chat.text}}
+								</div>
+							</div>
+                            {% else %}
+                            <div class="chat-message-right pb-4">
+								<div>
+									<img src="/static/default.svg" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40">
+									<div class="text-muted small text-nowrap mt-2">{{chat.timestamp}}</div>
+								</div>
+								<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
+									{{chat.text}}
+								</div>
+							</div>
+                            {% endif %}
+                            {% endfor %}
 
-    {%for chat in chat_log %}
-        <div class="card">
-            <h5 class="card-header">{{chat.timestamp}}</h5>
-            <div class="card-body">
-                <p class="card-text">{{chat.text}}</p>
-            </div>
-        </div>
-    {% endfor %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
+    <br>
     <a href="/"><button type="button" class="btn btn-primary">Return</button></a>
 {% endblock %}
