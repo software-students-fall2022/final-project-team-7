@@ -1,5 +1,5 @@
 import sys
-sys.path.append('../web-app')
+sys.path.append('/')
 print(sys.path)
 
 from app import app
