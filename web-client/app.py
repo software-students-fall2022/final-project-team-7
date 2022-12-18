@@ -4,6 +4,7 @@ from dotenv import dotenv_values
 import pymongo
 import datetime
 from bson.objectid import ObjectId
+from bson.timestamp import Timestamp
 import sys
 
 # instantiate the app
@@ -150,15 +151,45 @@ def job(job_id):
 
 # route for chat history
 @app.route('/history/')
-@app.route('/history/<from_time>/<to_time>') # to be implemented
-def history(from_time=None, to_time=None):
+@app.route('/history/<date_range>')
+def history(date_range=None):
     uid = '639e28607c6eba5ef2939c4b' # ???
-    chat_log = db.chat.find({
-        '$or': [
-            {'from_id': ObjectId(uid)},
-            {'to_id': ObjectId(uid)}
-        ]
-    }).sort('timestamp', pymongo.ASCENDING).limit(30)
+    if date_range is None:
+        date_range = 'all'
+    if date_range == 'today':
+        today = datetime.datetime.now()
+        today = datetime.datetime(today.year, today.month, today.day)
+        today = datetime.datetime.timestamp(today)
+        today = Timestamp(int(today), 0)
+        chat_log = db.chat.find({
+            '$or': [
+                {'from_id': ObjectId(uid)},
+                {'to_id': ObjectId(uid)}
+            ],
+            'timestamp': {'$gte': today}
+        }).sort('timestamp', pymongo.ASCENDING).limit(30)       
+    elif date_range == 'this_week':
+        today = datetime.datetime.now()
+        today = datetime.datetime(today.year, today.month, today.day)
+        last_week = today - datetime.timedelta(days=7)
+        last_week = datetime.datetime.timestamp(last_week)
+        last_week = Timestamp(int(last_week), 0)
+        chat_log = db.chat.find({
+            '$or': [
+                {'from_id': ObjectId(uid)},
+                {'to_id': ObjectId(uid)}
+            ],
+            'timestamp': {'$gte': last_week}
+        }).sort('timestamp', pymongo.ASCENDING).limit(30)
+    elif date_range == 'all':
+        chat_log = db.chat.find({
+            '$or': [
+                {'from_id': ObjectId(uid)},
+                {'to_id': ObjectId(uid)}
+            ]
+        }).sort('timestamp', pymongo.ASCENDING).limit(30)
+    else:
+        return render_template('error.html', error='Invalid date range'), 404
     res = []
     for doc in chat_log:
         doc['timestamp'] = datetime.datetime.fromtimestamp(doc['timestamp'].time)
