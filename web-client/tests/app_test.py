@@ -29,7 +29,7 @@ def test_job_template():
     client = app.test_client()
     url = '/job/63850f2eb4f144d4df2fc305'
     response = client.get(url)
-    assert response.status_code == 200
+    assert response.status_code == 404
 
 def test_error_template():
     # Test a route that does not exist
