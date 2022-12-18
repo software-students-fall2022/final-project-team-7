@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block container %}
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<style>
+    #start {
+        border: 0;
+        border-radius: 40px;
+
+        height: 40px;
+        width: 40px;
+        background-color: red;
+        outline: 0;
+    }
+</style>
+
+<h3>Chatroom Page</h3>
+
+<div id='btns'>
+    <button class="btn" id='start' onmousedown="mouseDown()" onmouseup="mouseUp()"><i class="fa fa-microphone"
+            style="font-size: 24px; color:white;"></i></button>
+</div>
+
+<div>
+    <ul class="list" id='ul'></ul>
+</div>
+
+<script>
+    'use strict'
+
+    let log = console.log.bind(console),
+        id = val => document.getElementById(val),
+        ul = id('ul'),
+        start = id('start'),
+        stop = id('stop'),
+        stream,
+        recorder,
+        counter = 1,
+        chunks,
+        media;
+
+
+    media = {
+        tag: 'audio',
+        type: 'audio/wav',
+        ext: '.wav',
+        gUM: { audio: true }
+    }
+    navigator.mediaDevices.getUserMedia(media.gUM).then(_stream => {
+        stream = _stream;
+
+        id('btns').style.display = 'inherit';
+        start.removeAttribute('disabled');
+        recorder = new MediaRecorder(stream);
+        recorder.ondataavailable = e => {
+            chunks.push(e.data);
+            if (recorder.state == 'inactive') makeLink();
+        };
+        log('got media stream successfully');
+    }).catch(log);
+
+    function mouseDown() {
+        document.getElementById("start").style.backgroundColor = "darkred";
+        chunks = [];
+        recorder.start();
+    }
+
+    function mouseUp() {
+        document.getElementById("start").style.backgroundColor = "red";
+        recorder.stop();
+    }
+
+    function makeLink() {
+        let blob = new Blob(chunks, { type: media.type })
+            , url = URL.createObjectURL(blob)
+            , li = document.createElement('li')
+            , mt = document.createElement(media.tag)
+            , hf = document.createElement('a')
+            ;
+        mt.controls = true;
+        mt.src = url;
+        hf.href = url;
+        hf.download = `${counter++}${media.ext}`;
+        hf.innerHTML = `donwload ${hf.download}`;
+        li.appendChild(mt);
+        li.appendChild(hf);
+        ul.appendChild(li);
+    }
+
+</script>
+
+{% endblock %}

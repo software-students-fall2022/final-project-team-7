@@ -16,36 +16,42 @@ config = dotenv_values(".env")
 # turn on debugging if in development mode
 if config['FLASK_ENV'] == 'development':
     # turn on debugging, if in development
-    app.debug = True # debug mnode
+    app.debug = True  # debug mnode
 
 
 # connect to the database
 cxn = pymongo.MongoClient(config['MONGO_URI'], serverSelectionTimeoutMS=5000)
 try:
     # verify the connection works by pinging the database
-    cxn.admin.command('ping') # The ping command is cheap and does not require auth.
-    db = cxn[config['MONGO_DBNAME']] # store a reference to the database
-    print(' *', 'Connected to MongoDB!') # if we get here, the connection worked!
+    # The ping command is cheap and does not require auth.
+    cxn.admin.command('ping')
+    db = cxn[config['MONGO_DBNAME']]  # store a reference to the database
+    # if we get here, the connection worked!
+    print(' *', 'Connected to MongoDB!')
 except Exception as e:
     # the ping command failed, so the connection is not available.
     print(' *', "Failed to connect to MongoDB at", config['MONGO_URI'])
-    print('Database connection error:', e) # debug
+    print('Database connection error:', e)  # debug
 
 # set up the routes
 # add statistics display to home page
 # route for the home page
+
+
 @app.route('/')
 def home():
     """
     Route for the home page
     """
     jobs = db.jobs.find()
-    str_submitted = "Jobs in database: " + str(db.jobs.count_documents({})) + "\n"
+    str_submitted = "Jobs in database: " + \
+        str(db.jobs.count_documents({})) + "\n"
     num_succeed = db.jobs.count_documents({"status": "COMPLETED"})
     str_succeed = "Jobs succeeded: " + str(num_succeed) + "\n"
     num_failed = db.jobs.count_documents({"status": "FAILED"})
     str_failed = "Jobs failed: " + str(num_failed) + "\n"
-    str_processing = "Jobs processing: " + str(db.jobs.count_documents({"status": "IN_PROCESS"})) + "\n"
+    str_processing = "Jobs processing: " + \
+        str(db.jobs.count_documents({"status": "IN_PROCESS"})) + "\n"
     if num_failed + num_succeed != 0:
         success_rate = round((num_succeed/(num_succeed+num_failed))*100)
     else:
@@ -62,8 +68,10 @@ def home():
             wait = each["start_time"] - each["creation_time"]
             total_completion += completion
             total_wait += wait
-        avg_completion = "Average completion time of jobs: " + str((total_completion / num_succeed).total_seconds()) + "s"
-        avg_wait = "Average wait time of jobs: " + str((total_wait / num_succeed).total_seconds()) + "s"
+        avg_completion = "Average completion time of jobs: " + \
+            str((total_completion / num_succeed).total_seconds()) + "s"
+        avg_wait = "Average wait time of jobs: " + \
+            str((total_wait / num_succeed).total_seconds()) + "s"
     return render_template('index.html', jobs=jobs, submitted=str_submitted,
                            num_succeed=str_succeed, failed=str_failed, processing=str_processing,
                            success_rate=str_success_rate, avg_completion=avg_completion, avg_wait=avg_wait)
@@ -71,6 +79,8 @@ def home():
 
 # route for job page
 # add statistics display to job page
+
+
 @app.route('/job/<job_id>')
 def job(job_id):
     """
@@ -84,8 +94,9 @@ def job(job_id):
         for i in range(len(job["transcript_items"])):
             if job["transcript_items"][i]["type"] == "pronunciation":
                 time_added = float(job["transcript_items"][i]["end_time"])\
-                             - float(job["transcript_items"][i]["start_time"])
-                confidence_added = float(job["transcript_items"][i]["alternatives"][0]["confidence"])
+                    - float(job["transcript_items"][i]["start_time"])
+                confidence_added = float(
+                    job["transcript_items"][i]["alternatives"][0]["confidence"])
                 total_time += time_added
                 total_confidence += confidence_added
                 count += 1
@@ -104,11 +115,17 @@ def job(job_id):
 # route for chat history
 @app.route('/history')
 def history():
-    uid = '639e28607c6eba5ef2939c4b' # ???
+    uid = '639e28607c6eba5ef2939c4b'  # ???
     chat_log = db.chat.find({'from_id': ObjectId(uid)})
     for each in chat_log:
         each["time"] = each["time"].strftime("%Y-%m-%d %H:%M:%S")
     return render_template('history.html', chat_log=chat_log)
+
+
+# route for chatroom
+@app.route('/chatroom')
+def chatroom():
+    return render_template('chatroom.html')
 
 
 # route to handle any errors
@@ -117,9 +134,9 @@ def handle_error(e):
     """
     Output any errors - good for debugging.
     """
-    return render_template('error.html', error=e), 404 # render the edit template
+    return render_template('error.html', error=e), 404  # render the edit template
 
-  
+
 # run the app
 if __name__ == "__main__":
-    app.run(debug = True)
+    app.run(debug=True)
