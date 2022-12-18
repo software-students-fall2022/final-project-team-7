@@ -12,6 +12,7 @@ from flask import session
 
 # instantiate the app
 app = Flask(__name__)
+app.secret_key = os.getenv("SESSION_KEY")
 
 # connect to the database
 cxn = pymongo.MongoClient(os.getenv("MONGO_URI"),

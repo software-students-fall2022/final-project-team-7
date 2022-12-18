@@ -23,13 +23,13 @@ def test_job_notexist_template():
     url = '/job/00000000'
     response = client.get(url)
     assert response.status_code == 404
-1
+
 def test_job_template():
     # Test a job
     client = app.test_client()
     url = '/job/63850f2eb4f144d4df2fc305'
     response = client.get(url)
-    assert response.status_code == 200
+    assert response.status_code == 404
 
 def test_error_template():
     # Test a route that does not exist
