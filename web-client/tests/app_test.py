@@ -12,8 +12,8 @@ from app import app
 def client():
     with app.test_client() as client:
         with client.session_transaction() as session:
-            session['username'] = 'test'
-            session['user_id'] = '639fe8c38d2fcfefcd49fa53'
+            session['username'] = 'bot@foo.bar'
+            session['user_id'] = '639ff114a951fa2422580cd0'
         yield client
 
 
