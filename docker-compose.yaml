@@ -4,7 +4,7 @@ services:
     build: ./web-client
     working_dir: "/app"
     ports:
-      - "5000:5000"
+      - "${WEB_CLIENT_LOCAL_PORT}:5000"
     links:
       - ml-client
     depends_on:
@@ -14,6 +14,7 @@ services:
     environment:
       - FLASK_APP=app.py
       - FLASK_DEBUG=${FLASK_DEBUG}
+      - SESSION_KEY=${SESSION_KEY}
       - MONGO_DBNAME=${MONGO_DBNAME}
       - MONGO_URI=${MONGO_URI}
 
