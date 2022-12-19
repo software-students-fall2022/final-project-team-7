@@ -2,16 +2,13 @@ import sys
 sys.path.append('.')
 print(sys.path)
 
-from app import app
-from flask import Flask, render_template, session
-import pytest
 import pytest_flask
-import pymongo
-import mongomock
-import os
+import pytest
+from flask import Flask, render_template, session
+from app import app
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture()
 def client():
     with app.test_client() as client:
         with client.session_transaction() as session:
@@ -41,9 +38,9 @@ def test_register_template(client):
     assert response.status_code == 200
 
 
-def test_home_template(client):
+def test_login_template(client):
     # Test home route
-    url = '/home'
+    url = '/login'
     response = client.get(url)
     assert response.status_code == 200
 
@@ -80,12 +77,5 @@ def test_profile_template(client):
 def test_edit_template(client):
     # Test edit route
     url = '/edit'
-    response = client.get(url)
-    assert response.status_code == 200
-
-
-def test_chatroom_template(client):
-    # Test edit route
-    url = '/chatroom'
     response = client.get(url)
     assert response.status_code == 200
