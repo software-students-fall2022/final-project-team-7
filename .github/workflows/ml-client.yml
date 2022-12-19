@@ -13,9 +13,6 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./ml-client
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.10
@@ -39,4 +36,6 @@ jobs:
         API_TOKEN: ${{ secrets.API_TOKEN }}
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       run: |
+        docker compose up --build
+        docker exec -it web-client bash
         pytest
