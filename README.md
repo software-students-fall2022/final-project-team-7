@@ -5,29 +5,27 @@
 [![Web App Client Docker Image CICD](https://github.com/software-students-fall2022/final-project-team-7/actions/workflows/web-app-client.yml/badge.svg)](https://github.com/software-students-fall2022/final-project-team-7/actions/workflows/web-app-client.yml)
 
 [![Continuous Deployment](https://github.com/software-students-fall2022/final-project-team-7/actions/workflows/deploy.yml/badge.svg)](https://github.com/software-students-fall2022/final-project-team-7/actions/workflows/deploy.yml)
+
+[![ML Client](https://img.shields.io/docker/v/yvonne511/final-project-team-7-ml-client/latest?label=ml-client&logo=docker)](https://hub.docker.com/r/yvonne511/final-project-team-7-ml-client)
+[![Web Client](https://img.shields.io/docker/v/yvonne511/final-project-team-7-web-app-client/latest?label=web-client&logo=docker)](https://hub.docker.com/r/yvonne511/final-project-team-7-web-app-client)
+
+
 # Final Project
 
-This web app allows user to have a converation with a bot using only voice prompt. The chatroom will transcribe user's speech and respond to it as a normal conversation. [Check it out here](http://104.131.177.209/)
+This web app allows users to have conversations with a bot using voice prompts. The chatroom will transcribe the user's speech and respond to it as a normal conversation. [Check it out here](http://104.131.177.209/)
 
-Table of contents
-=================
+
+## Table of Contents
+
 * [DockerHub Links](#dockerhub-links)
 * [Team Members](#team-members)
-* [Configuration](#configuration)
 * [Usage](#usage)
+    * [Build and Run From Source Code](#build-and-run-from-source-code)
+    * [Testing Using Pytest](#testing-using-pytest)
 
-## DockerHub Links
-
-There are two containers built in this project. One for back-end routers that access all the machine learning functionalities including voice transcribe and chat bot, hosted on port 5001. One for front-end web page, hosted on port 5000.
-
-The Links to Container Images Hosted on GitHub:
-
-final-project-team-7-ml-client: https://hub.docker.com/r/yvonne511/final-project-team-7-web-app-client
-
-
-final-project-team-7-web-app-client: https://hub.docker.com/r/yvonne511/final-project-team-7-web-app-client
 
 ## Team Members
+
 [Yvonne Wu (Yiyi Wu)](https://github.com/Yvonne511)
 
 [Larry Li](https://github.com/86larryli)
@@ -40,47 +38,79 @@ final-project-team-7-web-app-client: https://hub.docker.com/r/yvonne511/final-pr
 
 [Otis Lu](https://github.com/OtisL99)
 
-## Configuration
 
-### To run the machine learning client:
+## DockerHub Links
 
-1. Goes to ml-client folder, install all dependencies
+There are two containers built in this project. One for all the machine learning functionalities, including voice transcribe and chat bot. One for the web app.
 
-        pip3 install -r requirements.txt
+The Links to Container Images Hosted on DockerHub:
 
-2. Build container by running following command:
+[yvonne511/final-project-team-7-ml-client](https://hub.docker.com/r/yvonne511/final-project-team-7-ml-client)
 
-        docker build -t <dockerhub username>/final-project-team-7-ml-client .
+[yvonne511/final-project-team-7-web-app-client](https://hub.docker.com/r/yvonne511/final-project-team-7-web-app-client)
 
-3. Run container images on port 5001 by the following command:
-
-        docker run -ti --rm -p 5001:5001 <dockerhub username>/final-project-team-7-ml-client:latest
-
-### To run the web app client:
-
-1. Goes to ml-client folder, install all dependencies
-
-        pip3 install -r requirements.txt
-
-2. Build container by running following command:
-
-        docker build -t <dockerhub username>/final-project-team-7-web-app-client .
-
-3. Run container images on port 5000 by the following command:
-
-        docker run -ti --rm -p 5001:5001 <dockerhub username>/final-project-team-7-web-app-client:latest
-
-### To run test:
-
-Goes to each repository and run:
-
-    pytest
 
 ## Usage
 
-- User can login
-    - User can see its own profile
-- User can speak to a chatbot
-- User can check the chat history
+### Build and Run From Source Code
+
+1. Clone the project source code to your machine:
+
+    ```bash
+    git clone https://github.com/software-students-fall2022/final-project-team-7.git
+    ```
+
+2. In the project root directory (where `docker-compose.yaml` is), create a `.env` file:
+
+    ```
+    WEB_CLIENT_LOCAL_PORT=<YOUR_WEB_CLIENT_LOCAL_PORT>
+    FLASK_DEBUG=0
+
+    # WEB CLIENT
+    SESSION_KEY=<YOUR_SESSION_KEY>
+    MONGO_DBNAME=chatbot
+    MONGO_URI=<YOUR_MONGODB_URI>
+
+    # ML CLIENT
+    API_TOKEN=<YOUR_HUGGINGFACE_API_KEY>
+    OPENAI_API_KEY=<YOUR_OPENAI_API_KEY>
+    ```
+
+3. In the project root directory (where `docker-compose.yaml` is), run:
+
+    ```bash
+    docker compose up --build
+    ```
+
+    The web client will run at `http://localhost:<YOUR_WEB_CLIENT_LOCAL_PORT>`.
 
 
+### Testing Using Pytest
+
+#### Testing Web Client
+
+1. Go to the web client container (make sure the web client container is running first):
+
+    ```
+    docker exec -it web-client bash
+    ```
+
+2. Run `pytest`:
+
+    ```
+    pytest
+    ```
+
+#### Testing Machien Learning Client
+
+1. Go to the machine learning client container (make sure the machine learning client container is running first):
+
+    ```
+    docker exec -it ml-client bash
+    ```
+
+2. Run `pytest`:
+
+    ```
+    pytest
+    ```
