@@ -88,8 +88,7 @@ def test_history_range_template():
 def test_profile_template(app_with_user):
     url = '/profile'
     response = app_with_user.get(url)
-    assert db == ""
-
+    assert response.status_code == 200
 
 
 def test_edit_template(app_with_user):
