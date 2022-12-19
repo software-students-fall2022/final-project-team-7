@@ -15,12 +15,13 @@
 This web app allows users to have conversations with a bot using voice prompts. The chatroom will transcribe the user's speech and respond to it as a normal conversation. [Check it out here](http://104.131.177.209/)
 
 
-## Table of contents
+## Table of Contents
 
 * [DockerHub Links](#dockerhub-links)
 * [Team Members](#team-members)
 * [Usage](#usage)
     * [Build and Run From Source Code](#build-and-run-from-source-code)
+    * [Testing Using Pytest](#testing-using-pytest)
 
 
 ## Team Members
@@ -84,7 +85,7 @@ The Links to Container Images Hosted on DockerHub:
     The web client will run at `http://localhost:<YOUR_WEB_CLIENT_LOCAL_PORT>`.
 
 
-### Testing using Pytest
+### Testing Using Pytest
 
 #### Testing Web Client
 
