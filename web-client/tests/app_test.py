@@ -24,11 +24,9 @@ def app_with_database(flask_app):
 
 @pytest.fixture(scope='session')
 def app_with_user(app_with_database):
-    db.insert_one({"username": "test", "password":  "test", "reg_date":  "test",
+    db.user.insert_one({"username": "test", "password":  "test", "reg_date":  "test",
                    "num_chat": 0, "ast_online":  "test", "log_time":  "test"})
     yield app_with_database
-
-
 
 
 def test_base_template():
