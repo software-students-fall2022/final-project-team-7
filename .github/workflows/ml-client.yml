@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./web-client
+        working-directory: ./ml-client
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.10
