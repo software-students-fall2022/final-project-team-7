@@ -30,6 +30,10 @@ To build and run container using Dockerfile:
     docker build -t <dockerhub username>/final-project-team-7-ml-client .
     docker run -ti --rm -p 5001:5001 <dockerhub username>/final-project-team-7-ml-client:latest
 
+To download and run container from Dockerhub:
+
+    docker pull <dockerhub username>/final-project-team-7-ml-client:latest
+
 ## Credits
 
 This ML client was built using Facebook's wav2vec2 model and OpenAI's text-davinci-003 model. We are grateful to the authors and contributors of these models for making them available for use.
