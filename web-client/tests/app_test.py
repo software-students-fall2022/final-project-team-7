@@ -1,14 +1,14 @@
+import os
+import mongomock
+import pymongo
+import pytest_flask
+import pytest
+from flask import Flask, render_template
+from app import app
 import sys
 sys.path.append('.')
 print(sys.path)
 
-from app import app
-from flask import Flask, render_template
-import pytest
-import pytest_flask
-import pymongo
-import mongomock
-import os
 
 def test_base_template():
     # Test login route
@@ -17,12 +17,14 @@ def test_base_template():
     response = client.get(url)
     assert response.status_code == 200
 
+
 def test_error_template():
     # Test a route that does not exist
     client = app.test_client()
     url = '/errornotexist'
     response = client.get(url)
     assert response.status_code == 404
+
 
 def test_register_template():
     # Test register route
@@ -31,6 +33,7 @@ def test_register_template():
     response = client.get(url)
     assert response.status_code == 200
 
+
 def test_home_template():
     # Test home route
     client = app.test_client()
@@ -38,12 +41,14 @@ def test_home_template():
     response = client.get(url)
     assert response.status_code == 200
 
+
 def test_history_template():
     # Test history route
     client = app.test_client()
     url = '/history'
     response = client.get(url)
     assert response.status_code == 308
+
 
 def test_history_range_template():
     # Test history route
@@ -60,19 +65,19 @@ def test_history_range_template():
     response = client.get(url)
     assert response.status_code == 200
 
-def test_profile_template():
-    # Test profile route
-    client = app.test_client()
-    url = '/profile'
-    response = client.get(url)
-    assert response.status_code == 404
 
-def test_edit_template():
+def test_profile_template(app_with_user):
+    url = '/profile'
+    response = app_with_user.get(url)
+    assert response.status_code == 200
+
+
+def test_edit_template(app_with_user):
     # Test edit route
-    client = app.test_client()
     url = '/edit'
-    response = client.get(url)
-    assert response.status_code == 404
+    response = app_with_user.get(url)
+    assert response.status_code == 200
+
 
 def test_chatroom_template():
     # Test edit route
