@@ -54,7 +54,7 @@ def test_login_template(client):
 
 def test_history_template(client):
     # Test history route
-    url = '/history'
+    url = '/history/'
     response = client.get(url)
     assert response.status_code == 200
 
