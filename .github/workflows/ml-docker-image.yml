@@ -20,7 +20,7 @@ jobs:
     - name: Build the Docker Image
       run: |
         cd ml-client
-        docker build . --file Dockerfile --tag final-project-team-7-ml-client:$(date +%s)
+        docker build . --file Dockerfile --tag final-project-team-7-ml-client:latest
     - name: Docker Push
       run: docker push ${{secrets.DOCKER_USER}}/final-project-team-7-ml-client
       
