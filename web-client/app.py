@@ -219,10 +219,9 @@ def history(date_range=None):
 
 
 # account profile page
-# waiting for flask session to be implemented
 @app.route('/profile')
 def profile():
-    user_id = "639ed925fdbaf2074da8911b" # an existing id for testing
+    user_id = session['user_id']
     current_user = user_collection.find_one(({'_id': ObjectId(user_id)}))
     username = current_user["username"]
     signup = current_user["reg_date"]
@@ -232,10 +231,9 @@ def profile():
 
 
 # Edit account page
-# Waiting for flask session to be implemented
 @app.route('/edit', methods=['GET', 'POST'])
 def edit():
-    user_id = "639ed925fdbaf2074da8911b" # an existing id for testing
+    user_id = session['user_id']
     if request.method == 'POST':
         changed_email = request.form["email"]
         changed_password = request.form["password"]
@@ -250,6 +248,7 @@ def edit():
             if not user_collection.find_one({'username': changed_email}) is None:
                 return render_template('edit.html', message="Email taken")
             doc["username"] = changed_email
+            session['username'] = changed_email
         if len(changed_password) != 0:
             doc["password"] = changed_password
         user_collection.update_one({'_id': ObjectId(user_id)}, {"$set": doc})
