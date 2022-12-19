@@ -1,10 +1,13 @@
-import pytest
-from app import app, db
+import sys
+sys.path.append('.')
+print(sys.path)
 
+from app import db, app
 import mongomock
-
-
+import pytest
 # start flask app test mode
+
+
 @pytest.fixture(scope='session')
 def flask_app():
     app.config.update({'TESTING': True})

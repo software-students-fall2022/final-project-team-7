@@ -1,13 +1,15 @@
+import sys
+sys.path.append('.')
+print(sys.path)
+
+from app import app, db
 import os
 import mongomock
 import pymongo
 import pytest_flask
 import pytest
 from flask import Flask, render_template
-from app import app
-import sys
-sys.path.append('.')
-print(sys.path)
+
 
 
 def test_base_template():
