@@ -80,3 +80,13 @@ def test_chatroom_template():
     url = '/chatroom'
     response = client.get(url)
     assert response.status_code == 200
+
+def get_db():
+    cxn = pymongo.MongoClient(os.environ['MONGODB_URI'],serverSelectionTimeoutMS=5000)
+    db = cxn.get_default_database()
+    return db
+
+def db_text_add():
+    db = get_db()
+    db.test_collection.insert_one({"user_id": "test", "user_name": "test"})
+    assert db.test_collection.find_one({"user_id": "test", "user_name": "test"}) is not None
