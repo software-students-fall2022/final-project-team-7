@@ -152,7 +152,7 @@ def profile():
     username = current_user["username"]
     signup = current_user["reg_date"]
     last_login = current_user["last_online"]
-    chat_history = current_user["num_chat"]
+    chat_history = db.chat.count_documents({'from_id': ObjectId(user_id)})
     return render_template('profile.html', email=username, signup=signup, login=last_login, chat_history=chat_history)
 
 
