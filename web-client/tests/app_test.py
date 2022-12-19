@@ -10,6 +10,7 @@ import pytest_flask
 import pymongo
 import mongomock
 
+sys.path.remove('.')
 
 def test_base_template():
     # Test login route
@@ -67,17 +68,14 @@ def test_history_range_template():
     assert response.status_code == 200
 
 
-def test_profile_template():
-    # Test profile route
-    client = app.test_client()
+def test_profile_template(app_with_user):
     url = '/profile'
-    response = client.get(url)
-    assert response.status_code == 404
+    response = app_with_user.get(url)
+    assert response.status_code == 200
 
 
-def test_edit_template():
+def test_edit_template(app_with_user):
     # Test edit route
-    client = app.test_client()
     url = '/edit'
-    response = client.get(url)
-    assert response.status_code == 404
+    response = app_with_user.get(url)
+    assert response.status_code == 200
