@@ -10,7 +10,7 @@ import pytest_flask
 import pytest
 from flask import Flask, render_template
 
-
+sys.path.remove('.')
 
 def test_base_template():
     # Test login route
