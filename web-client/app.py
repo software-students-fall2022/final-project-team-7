@@ -35,19 +35,14 @@ except Exception as e:
 
 # web MongoClient
 user_collection = db.user
-log_in = False
-
-# login page
 
 
 @app.route('/')
-def login():
+def index():
     """
-    Route for the login page
+    Route for the chatroom page
     """
-    global log_in
-    log_in = False
-    return render_template('login.html')
+    return render_template('chatroom.html')
 
 
 # register page
@@ -72,7 +67,6 @@ def regis():
 
 @app.route('/home', methods=['GET', 'POST'])
 def home():
-    global log_in
     if request.method == 'POST':
         json_data = request.form
         cur = user_collection.find_one(
@@ -86,85 +80,16 @@ def home():
                 last_online = cur["log_time"]
                 username = cur["username"]
                 user_collection.update_one({"username": username}, {"$set": {"last_online": last_online, "log_time": log_time}})
-                log_in = True
                 # save username and user_id in session
                 session['username'] = cur['username']
                 session['user_id'] = str(cur['_id'])
             else:
                 return render_template('login.html', NoAct=True)
     else:
-        if log_in == False:
+        if "username" not in session or "user_id" not in session:
             return render_template('login.html')
-    """
-    Route for the home page
-    """
-    jobs = db.jobs.find()
-    str_submitted = "Jobs in database: " + \
-        str(db.jobs.count_documents({})) + "\n"
-    num_succeed = db.jobs.count_documents({"status": "COMPLETED"})
-    str_succeed = "Jobs succeeded: " + str(num_succeed) + "\n"
-    num_failed = db.jobs.count_documents({"status": "FAILED"})
-    str_failed = "Jobs failed: " + str(num_failed) + "\n"
-    str_processing = "Jobs processing: " + \
-        str(db.jobs.count_documents({"status": "IN_PROCESS"})) + "\n"
-    if num_failed + num_succeed != 0:
-        success_rate = round((num_succeed/(num_succeed+num_failed))*100)
-    else:
-        success_rate = 0
-    str_success_rate = "Success rate: " + str(success_rate) + "%\n"
-    avg_completion = "Average completion time of jobs: INVALID"
-    avg_wait = "Average wait time of jobs: INVALID"
-    if num_succeed != 0:
-        success_doc = db.jobs.find({"status": "COMPLETED"})
-        total_completion = datetime.timedelta()
-        total_wait = datetime.timedelta()
-        for each in success_doc:
-            completion = each["completion_time"] - each["start_time"]
-            wait = each["start_time"] - each["creation_time"]
-            total_completion += completion
-            total_wait += wait
-        avg_completion = "Average completion time of jobs: " + \
-            str((total_completion / num_succeed).total_seconds()) + "s"
-        avg_wait = "Average wait time of jobs: " + \
-            str((total_wait / num_succeed).total_seconds()) + "s"
-    return render_template('index.html', jobs=jobs, submitted=str_submitted,
-                           num_succeed=str_succeed, failed=str_failed, processing=str_processing,
-                           success_rate=str_success_rate, avg_completion=avg_completion, avg_wait=avg_wait)
-    # render the home template
-
-# route for job page
-# add statistics display to job page
-
-
-@app.route('/job/<job_id>')
-def job(job_id):
-    """
-    Route for the job page
-    """
-    job = db.jobs.find_one({'_id': ObjectId(job_id)})
-    if job["status"] == "COMPLETED":
-        total_time = 0
-        total_confidence = 0
-        count = 0
-        for i in range(len(job["transcript_items"])):
-            if job["transcript_items"][i]["type"] == "pronunciation":
-                time_added = float(job["transcript_items"][i]["end_time"])\
-                    - float(job["transcript_items"][i]["start_time"])
-                confidence_added = float(
-                    job["transcript_items"][i]["alternatives"][0]["confidence"])
-                total_time += time_added
-                total_confidence += confidence_added
-                count += 1
-        if count != 0:
-            avg_confidence = str(round((total_confidence/count)*100, 2)) + "%"
-            avg_time = str(round(total_time/count, 3)) + "s"
-        else:
-            avg_confidence = "INVALID"
-            avg_time = "INVALID"
-    else:
-        avg_confidence = "INVALID"
-        avg_time = "INVALID"
-    return render_template('job.html', job=job, avg_time=avg_time, avg_confidence=avg_confidence)
+    
+    return render_template('chatroom.html')
 
 
 # route for chat history

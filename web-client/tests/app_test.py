@@ -17,20 +17,6 @@ def test_base_template():
     response = client.get(url)
     assert response.status_code == 200
 
-def test_job_notexist_template():
-    # Test a job that does not exist
-    client = app.test_client()
-    url = '/job/00000000'
-    response = client.get(url)
-    assert response.status_code == 404
-
-def test_job_template():
-    # Test a job
-    client = app.test_client()
-    url = '/job/63850f2eb4f144d4df2fc305'
-    response = client.get(url)
-    assert response.status_code == 404
-
 def test_error_template():
     # Test a route that does not exist
     client = app.test_client()
@@ -52,3 +38,45 @@ def test_home_template():
     response = client.get(url)
     assert response.status_code == 200
 
+def test_history_template():
+    # Test history route
+    client = app.test_client()
+    url = '/history'
+    response = client.get(url)
+    assert response.status_code == 308
+
+def test_history_range_template():
+    # Test history route
+    client = app.test_client()
+    url = '/history/all'
+    response = client.get(url)
+    assert response.status_code == 200
+
+    url = '/history/today'
+    response = client.get(url)
+    assert response.status_code == 200
+
+    url = '/history/this_week'
+    response = client.get(url)
+    assert response.status_code == 200
+
+def test_profile_template():
+    # Test profile route
+    client = app.test_client()
+    url = '/profile'
+    response = client.get(url)
+    assert response.status_code == 404
+
+def test_edit_template():
+    # Test edit route
+    client = app.test_client()
+    url = '/edit'
+    response = client.get(url)
+    assert response.status_code == 404
+
+def test_chatroom_template():
+    # Test edit route
+    client = app.test_client()
+    url = '/chatroom'
+    response = client.get(url)
+    assert response.status_code == 200

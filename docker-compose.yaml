@@ -14,6 +14,7 @@ services:
     environment:
       - FLASK_APP=app.py
       - FLASK_DEBUG=${FLASK_DEBUG}
+      - SESSION_KEY=${SESSION_KEY}
       - MONGO_DBNAME=${MONGO_DBNAME}
       - MONGO_URI=${MONGO_URI}
 
