@@ -1,5 +1,5 @@
 import pytest
-import app
+from app import app, db
 
 import mongomock
 
@@ -7,8 +7,8 @@ import mongomock
 # start flask app test mode
 @pytest.fixture(scope='session')
 def flask_app():
-    app.app.config.update({'TESTING': True})
-    with app.app.test_client() as client:
+    app.config.update({'TESTING': True})
+    with app.test_client() as client:
         yield client
 
 # create a fake database
@@ -16,7 +16,7 @@ def flask_app():
 
 @pytest.fixture(scope='session')
 def app_with_database(flask_app):
-    app.db = mongomock.MongoClient().db
+    db = mongomock.MongoClient().db
     yield flask_app
 
 # create a fake user
@@ -24,6 +24,6 @@ def app_with_database(flask_app):
 
 @pytest.fixture(scope='session')
 def app_with_user(app_with_database):
-    app.db.insert_one({"username": "test", "password":  "test", "reg_date":  "test",
-                      "num_chat": 0, "ast_online":  "test", "log_time":  "test"})
+    db.insert_one({"username": "test", "password":  "test", "reg_date":  "test",
+                   "num_chat": 0, "ast_online":  "test", "log_time":  "test"})
     yield app_with_database
