@@ -29,10 +29,6 @@ except Exception as e:
     print(' *', "Failed to connect to MongoDB")
     print('Database connection error:', e)  # debug
 
-# set up the routes
-# add statistics display to home page
-# route for the home page
-
 # web MongoClient
 user_collection = db.user
 
@@ -42,7 +38,10 @@ def index():
     """
     Route for the chatroom page
     """
-    return render_template('chatroom.html')
+    if "username" not in session or "user_id" not in session:
+        return redirect("/login")
+    else:
+        return render_template('chatroom.html')
 
 
 # register page
@@ -65,8 +64,8 @@ def regis():
     return render_template('register.html')
 
 
-@app.route('/home', methods=['GET', 'POST'])
-def home():
+@app.route('/login', methods=['GET', 'POST'])
+def login():
     if request.method == 'POST':
         json_data = request.form
         cur = user_collection.find_one(
@@ -79,17 +78,17 @@ def home():
                 log_time = str(datetime.date.today())
                 last_online = cur["log_time"]
                 username = cur["username"]
-                user_collection.update_one({"username": username}, {"$set": {"last_online": last_online, "log_time": log_time}})
+                user_collection.update_one({"username": username}, {
+                                           "$set": {"last_online": last_online, "log_time": log_time}})
                 # save username and user_id in session
                 session['username'] = cur['username']
                 session['user_id'] = str(cur['_id'])
+
+                return redirect("/")
             else:
                 return render_template('login.html', NoAct=True)
     else:
-        if "username" not in session or "user_id" not in session:
-            return render_template('login.html')
-    
-    return render_template('chatroom.html')
+        return render_template('login.html')
 
 
 # route for chat history
@@ -181,15 +180,12 @@ def edit():
     return render_template('edit.html')
 
 
-# route for chatroom
-@app.route('/chatroom')
-def chatroom():
-    return render_template('chatroom.html')
-
-
 # route for chatroom audio transcribe
 @app.route('/chatroom/audio', methods=['POST'])
 def handle_audio_upload():
+    if "username" not in session or "user_id" not in session:
+        return redirect("/login")
+
     files = request.files
     file = files.get('fileBlob')
 
@@ -204,6 +200,14 @@ def handle_audio_upload():
             "Content-Type": "application/json; charset=utf-8"
         }).json()
 
+        if res["success"] and res["transcript"]["text"] != "":
+            db.chat.insert_one({
+                "from_id": ObjectId(session["user_id"]),
+                "to_id":  ObjectId("639fda7d0de2ac51cade9615"),
+                "text": res["transcript"]["text"],
+                "timestamp": Timestamp(int(datetime.datetime.now().timestamp()), 1)
+            })
+
         return jsonify(res)
     else:
         return jsonify({
@@ -215,6 +219,9 @@ def handle_audio_upload():
 # route for chatroom audio transcribe
 @app.route('/chatroom/response', methods=['POST'])
 def handle_bot_response():
+    if "username" not in session or "user_id" not in session:
+        return redirect("/login")
+
     data = request.json
     print("data:", data)
 
@@ -226,6 +233,13 @@ def handle_bot_response():
     }, headers={
         "Content-Type": "application/json; charset=utf-8"
     }).json()
+
+    db.chat.insert_one({
+        "from_id": ObjectId("639fda7d0de2ac51cade9615"),
+        "to_id": ObjectId(session["user_id"]),
+        "text": res["response"],
+        "timestamp": Timestamp(int(datetime.datetime.now().timestamp()), 1)
+    })
 
     return jsonify(res)
 
