@@ -36,7 +36,7 @@ user_collection = db.user
 @app.route('/')
 def index():
     """
-    Route for the chatroom page
+    Route for the chatroom page :D
     """
     if "username" not in session or "user_id" not in session:
         return redirect("/login")
