@@ -22,10 +22,10 @@ There are two containers built in this project. One for back-end routers that ac
 
 The Links to Container Images Hosted on GitHub:
 
-final-project-team-7-ml-client: https://hub.docker.com/repository/docker/yvonne511/final-project-team-7-ml-client
+final-project-team-7-ml-client: https://hub.docker.com/r/yvonne511/final-project-team-7-web-app-client
 
 
-final-project-team-7-web-app-client: https://hub.docker.com/repository/docker/yvonne511/final-project-team-7-web-app-client
+final-project-team-7-web-app-client: https://hub.docker.com/r/yvonne511/final-project-team-7-web-app-client
 
 ## Team Members
 [Yvonne Wu (Yiyi Wu)](https://github.com/Yvonne511)
@@ -77,5 +77,10 @@ Goes to each repository and run:
     pytest
 
 ## Usage
+
+- User can login
+    - User can see its own profile
+- User can speak to a chatbot
+- User can check the chat history
 
 
