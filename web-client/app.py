@@ -95,7 +95,9 @@ def login():
 @app.route('/history/')
 @app.route('/history/<date_range>')
 def history(date_range=None):
-    uid = '639e28607c6eba5ef2939c4b'  # ???
+    if "username" not in session or "user_id" not in session:
+        return redirect("/login")
+    uid = session['user_id']
     if date_range is None:
         date_range = 'all'
     if date_range == 'today':
