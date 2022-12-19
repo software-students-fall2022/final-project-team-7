@@ -6,6 +6,10 @@
 
 [![Continuous Deployment](https://github.com/software-students-fall2022/final-project-team-7/actions/workflows/deploy.yml/badge.svg)](https://github.com/software-students-fall2022/final-project-team-7/actions/workflows/deploy.yml)
 
+[![ML Client](https://img.shields.io/docker/v/yvonne511/final-project-team-7-ml-client/latest?label=ml-client&logo=docker)](https://hub.docker.com/r/yvonne511/final-project-team-7-ml-client)
+[![Web Client](https://img.shields.io/docker/v/yvonne511/final-project-team-7-web-app-client/latest?label=web-client&logo=docker)](https://hub.docker.com/r/yvonne511/final-project-team-7-web-app-client)
+
+
 # Final Project
 
 This web app allows users to have conversations with a bot using voice prompts. The chatroom will transcribe the user's speech and respond to it as a normal conversation. [Check it out here](http://104.131.177.209/)
@@ -41,7 +45,6 @@ There are two containers built in this project. One for all the machine learning
 The Links to Container Images Hosted on DockerHub:
 
 [yvonne511/final-project-team-7-ml-client](https://hub.docker.com/r/yvonne511/final-project-team-7-ml-client)
-
 
 [yvonne511/final-project-team-7-web-app-client](https://hub.docker.com/r/yvonne511/final-project-team-7-web-app-client)
 
