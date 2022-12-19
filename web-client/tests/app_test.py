@@ -17,6 +17,13 @@ def client():
         yield client
 
 
+def test_profile_template(client):
+    # Test profile route
+    url = '/profile'
+    response = client.get(url)
+    assert response.status_code == 200
+
+
 def test_base_template(client):
     # Test login route
     url = '/'
@@ -63,13 +70,6 @@ def test_history_range_template(client):
     assert response.status_code == 200
 
     url = '/history/this_week'
-    response = client.get(url)
-    assert response.status_code == 200
-
-
-def test_profile_template(client):
-    # Test profile route
-    url = '/profile'
     response = client.get(url)
     assert response.status_code == 200
 
